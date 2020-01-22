@@ -1,0 +1,26 @@
+TODO
+
+FIX STRINGS, there apears to be a bug when adding strings and using ccptr()
+
+
+Make bitmaps
+  Constructor from path or from size, no default DONE
+
+Make subcontexts
+  eachdefines a subcontext to be drawn into OBSOLETE
+
+
+Make bitmap contexts OBSOLETE
+
+
+
+6/11/04
+Write drawable bumpmap optimizationing simplification. HARD
+
+
+
+
+6/17/04
+fsaa
+lights
+
