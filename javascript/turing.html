@@ -1,0 +1,369 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Script-Type" content="text/javascript">
+  <title>Turing machines in javascript</title>
+  <script type="text/javascript">
+<!--
+
+// This holds the difrent states.
+var machine = new Object();
+// These are the tape and its position, and the current state.
+var tape = " ";
+var position = 0;
+var currentstate = "start";
+
+// This is a wrapper function for addsym.
+function addformsym(){
+  var dirstr = "";
+  if (document.addform.direction.selectedIndex === 0)
+    dirstr = "left";
+  else 
+    dirstr = "right";
+  addsym( document.addform.state.value, 
+          document.addform.symbol.value, 
+	  dirstr,
+	  document.addform.newstate.value,
+	  document.addform.newsymbol.value );
+  draw();
+}
+
+//This adds a symbol/state pair to the machine.
+function addsym( state, symbol, direction, newstate, newsymbol ){
+  if( ( state.indexOf( "," ) !== -1 ) || 
+      ( newstate.indexOf( "," ) !== -1 ) ||
+      ( state.indexOf( "\n" ) !== -1 ) || 
+      ( newstate.indexOf( "\n" ) !== -1 ) ){
+    alert( "State names must not contain commas or newlines" );
+    return undefined;
+  }
+  if( ( state.length === 0 ) || ( newstate.length === 0 ) ){
+    alert( "State name not given" );
+    return undefined;
+  }
+  if( ( symbol.length !== 1 ) || ( newsymbol.length !== 1 ) ){
+    alert( "Invalid symbol given" );
+    return undefined;
+  }
+  if( ( symbol === "," ) || ( newsymbol === "," ) ||
+      ( symbol === "\n" ) || ( newsymbol === "\n" ) ){
+    alert( "Commas and newlines are not valid symbols" );
+    return undefined;
+  }
+  
+  if( machine[ state ] === undefined ){
+    machine[ state ] = new Object();
+    machine[ state ].length = 0;
+    machine[ state ].syms = new Object();
+  }
+  if( machine[ state ][ symbol ] !== undefined )
+    delete machine[ state ].syms[ symbol ];
+  else
+    machine[ state ].length++;
+  machine[ state ].syms[ symbol ] = new Object();
+  machine[ state ].syms[ symbol ].direction = direction;
+  machine[ state ].syms[ symbol ].newstate = newstate;
+  machine[ state ].syms[ symbol ].newsymbol = newsymbol;
+}
+
+
+//This attempts to delete a symbol/state pair from the machine.
+function deletesym(){
+  var deleted = true;
+  if( ( machine[ document.deleteform.state.value ] !== undefined ) &&
+      ( machine[ document.deleteform.state.value ].syms[ document.deleteform.symbol.value ] !== undefined ) ){
+    delete machine[ document.deleteform.state.value ].syms[ document.deleteform.symbol.value ];
+    machine[ document.deleteform.state.value ].length--;
+    if( machine[ document.deleteform.state.value ].length === 0 ){
+      delete machine[ document.deleteform.state.value ].syms;
+      delete machine[ document.deleteform.state.value ];
+    }
+  }
+  else
+    alert( "No such symbol/state pair." );
+  draw();
+}
+
+
+//This function loads a machine from a code.
+function loadcode(){
+  var oldmachine = machine;
+  var code = document.displayform.code.value;
+  var index = 0;
+  var strings = new Array();
+  var failed = false;
+  
+  delete machine;
+  machine = new Object();
+
+  if( code.length === 0 ){
+    machine = new Object();
+    draw();
+    return undefined;
+  }
+
+  do{
+    state = "";
+    while( ( index < code.length ) && 
+           ( code[ index ] !== "," ) && 
+	   ( code[ index ] !== "\n" ) )
+      state += code[ index++ ];
+    index++;
+    
+    while( ( code[ index - 1 ] !== "\n" ) && ( index < code.length ) ){
+      
+      for( var i = 0; i < 4; i++ ){   
+        strings[ i ] = "";
+        while( ( index < code.length ) &&
+               ( code[ index ] !== "," ) &&
+               ( code[ index ] !== "\n" ) )
+          strings[ i ] += code[ index++ ];
+        if( ( ( index >= code.length ) || 
+            ( code[ index ] === "\n" ) ) && ( i !== 3 ) ){
+          failed = true;
+          break;
+        }
+	index++;
+      }	
+      if( failed )
+        break;
+      for( var j = 0; j < 4; j++ )
+        if( strings[ j ].length === 0 ){
+	  failed = true;
+          break;
+        }
+      addsym( state, strings[ 0 ], strings[ 2 ], strings[ 3 ], strings[ 1 ] );
+    }
+    if( failed ){
+      machine = oldmachine;
+      alert( "Invalid code given" );
+      draw();
+      return undefined;
+    } 	
+  } while( index < code.length );
+  draw();
+}
+
+
+//This updates the textarea to show the complete machine.
+function draw(){
+  document.displayform.code.value = "";
+  document.displayform.display.value = "";
+  var answer = "";
+  var code = "";
+  for( state in machine ){
+    answer += ( "In state " + state + "...\n" );
+    code += state;
+    for( symbol in machine[ state ].syms ){
+      answer += ( "Replace " + symbol + " with " + 
+        machine[ state ].syms[ symbol ].newsymbol + ", go " +
+	machine[ state ].syms[ symbol ].direction + " and enter state " + 
+	machine[ state ].syms[ symbol ].newstate + "\n" );
+      code += ( "," + symbol + "," + 
+        machine[ state ].syms[ symbol ].newsymbol + "," +
+	machine[ state ].syms[ symbol ].direction + "," + 
+	machine[ state ].syms[ symbol ].newstate );
+    }
+    answer += "\n";
+    code += "\n";
+  }
+  document.displayform.display.value = answer;
+  document.displayform.code.value = code;
+}
+ 
+//This loads a tape from the form.
+function loadtape(){
+  if( document.stateform.tape.value === "" )
+    tape = " ";
+  else
+    tape = document.stateform.tape.value;
+  position = 0;
+  drawtape();
+}
+
+
+//This function sets the state.
+function loadstate(){
+  if( document.stateform.setstate.value === "" )
+    alert( "Invalid state." );
+  else
+    currentstate = document.stateform.setstate.value;
+  drawtape();
+}
+
+
+//This function displays the tape in the display.
+function drawtape(){
+  var mid = "";
+  var begin = "                                  state: " + currentstate + "\n";
+  var ti = 0;
+  for( var i = 0; i < 80; i++ ){
+    ti = i + position - 40;
+    if( ( ti >= 0 ) && ( ti < tape.length ) ) 
+      mid += tape[ ti ];
+    else
+      mid += " ";
+  }
+  document.stateform.display.value = begin + mid + "\n" +
+               "                                        ^";
+}
+
+
+//these functions move the head either left or right.
+function goleft(){
+  if( position <= 0 ){
+    tape = ( "          " + tape );
+    position += 9;
+  }
+  else
+    position--;
+  drawtape();
+}
+function goright(){
+  if( position >= ( tape.length - 1 ) )
+    tape = ( tape + "          " );
+  position++;
+  drawtape();
+}
+
+//This function ticks the turing machine.
+function tick(){
+  if( ( machine[ currentstate ] !== undefined ) &&
+      ( machine[ currentstate ].syms[ tape[ position ] ] !== undefined ) ){
+    var state = currentstate;
+    tape = ( tape.substring( 0, position ) + 
+           machine[ state ].syms[ tape[ position ] ].newsymbol +
+	   tape.substring( position + 1, tape.length ) );
+    currentstate = machine[ state ].syms[ tape[ position ] ].newstate;
+    if( machine[ state ].syms[ tape[ position ] ].direction === "left" )
+      goleft();
+    else 
+      goright();
+  } else
+    drawtape();
+}
+function run(){
+  drawtape();
+  while( ( machine[ currentstate ] !== undefined ) &&
+      ( machine[ currentstate ].syms[ tape[ position ] ] !== undefined ) )
+      tick();            
+}
+
+
+// -->
+  </script>
+ </head>
+
+ <body>
+  
+  <center>
+   <form action=none name=stateform>
+   
+    The tape:<br>
+    <textarea cols=80 rows=3 name=display></textarea><br>
+    <input type=button value="<-" onclick="goleft()">
+    <input type=button value=tick onclick="tick()">
+    <input type=button value=run onclick="run()">
+    <input type=button value="->" onclick="goright()"><br><br>
+    <table>
+     <tr>
+      <td>
+       <table border=1 cellpadding=3>
+        <caption>Change the tape.</caption>
+        <tr>
+         <td><label for=tape>tape:</label></td>
+         <td><input type=text name=tape id=tape></td>
+        </tr><tr>
+         <td colspan=2>
+          <center>
+           <input type=button value="set tape" onclick="loadtape()">
+          </center>
+         </td>
+        </tr>
+       </table>
+      </td><td>
+       <table border=1 cellpadding=3>
+        <caption>Change the state.</caption>
+	<tr>
+	 <td><label for=setstate>state:</label></td>
+	 <td><input type=text name=setstate id=setstate></td>
+        </tr><tr>
+         <td colspan=2>
+          <center>
+	   <input type=button value="set state" onclick="loadstate()">
+	  </center>
+	 </td>
+	</tr>
+       </table>
+      </td>
+     </tr>
+    </table>
+      
+   </form>
+  </center>
+
+  <center><table><tr><td>
+   <form action=none name=addform>
+    <table border=1 cellpadding=3>
+     <caption>Add a new symbol/state pair.</caption>
+     <tr>
+      <td><label for=state>state:</label></td>
+      <td><input type=text name=state id=state></td>
+     </tr><tr>
+      <td><label for=symbol>symbol:</label></td>
+      <td><input type=text name=symbol id=symbol></td>
+     </tr><tr>
+      <td><label for=direction>direction:</label></td>
+      <td>
+       <select name=direction id=direction>
+        <option>left</option>
+        <option>right</option>
+       </select>
+      </td>
+     </tr><tr>
+      <td><label for=newstate>new state:</label></td>
+      <td><input type=text name=newstate id=newstate></td>
+     </tr><tr>
+      <td><label for=newsymbol>new symbol:</label></td>
+      <td><input type=text name=newsymbol id=newsymbol></td>
+     </tr><tr>
+      <td colspan=2>
+       <center>
+        <input type=button value=add onclick="addformsym()">
+       </center>
+      </td>
+     </tr>
+    </table>
+   </form>
+  </td><td>
+   <form action=none name=deleteform>
+    <table border=1 cellpadding=3>
+     <caption>Delete a symbol/state pair.</caption>
+     <tr>
+      <td><label for=delstate>state:</label></td>
+      <td><input type=text name=state id=delstate></td>
+     </tr><tr>
+      <td><label for=delsymbol>symbol:</label></td>
+      <td><input type=text name=symbol id=delsymbol></td>
+     </tr><tr>
+      <td colspan=2>
+       <center>
+        <input type=button value=delete onclick="deletesym()">
+       </center>
+      </td>
+     </tr>
+    </table>
+   </form>
+  </td></tr></table></center>
+
+  <form action=none name=displayform><center>
+   Machine description:<br>
+   <textarea cols=80 rows=4 name=display></textarea><br>
+   Machine code:<br>
+   <textarea cols=80 rows=4 name=code></textarea><br>
+   <input type=button value="load machine" onclick="loadcode()">
+  </center></form>
+  
+ </body>
+</html>
+
