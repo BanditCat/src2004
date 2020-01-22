@@ -1,0 +1,79 @@
+FEATURES:
+True per-pixel, non-interpolated Phong shading model.
+2 pass per light model ( one for setting up stencil buffer, one to actually draw it in ) ( not yet ).
+Zfail stencil shadows with hardware accelerated VBO shadow caps. ( not yet ).
+100% VBO enabled texture pass.
+Textured lighting including omni-directional cube map textured lighting. ( not yet ).
+Robust vector/matrix library.
+Ultra fast matrix inversion.
+Generic shader support ( not yet ).
+RGBA render to texture. ( not yet ).
+Support for 32/24/16/15 bit displays with full 8/8/8/8 bit color precision via RTT single-buffering. ( not yet ).
+Built in depth of field effect. ( not yet ).
+
+
+
+11/29/04
+. Made this file.
+
+
+
+12/14/04
+. Inverted y axis in bump vector unpacking for the main fragment shader, now bumpmaps are DirectX friendly.
+Also changed RGBSurface::makebumpmap to agree with new mapping.
+
+. Made it so the vertex shader generates texture space R vectors via cross product rather than reading them
+in from a VBO.  Also changed Drawables to reflect this.
+
+. Changed mouse handling so that a double click sets the button pressed flag for that button instead
+of just generating a double-click event.
+
+
+
+12/16/04
+. Created Texture class and seperated OpenGL texture functionality from the Surface class. 
+
+. UnGPLed the software to make it more friendly.
+
+. Wrote Drawable::testneighbors so that I can make neighbour detection faster than findneighbors ( later ).
+
+. Made Engine::init take a parameter indicating whether or not to start with anisotropy. ( document ).
+
+
+
+12/17/04
+. Started a features list at the beginning of this file.
+
+. Created vis/cgshader.H and cgshader.cpp to house shader functionality.
+
+. Started work on CGShader class.
+
+
+
+12/18/04
+. Finished work on CGShader class.
+
+. Added support for wireframes to Display and changed gears to reflect this ( use w key to turn on wireframes ).
+
+
+
+12/19/04
+. Started work on proper shadow volumes and got caught zfighting.
+
+
+
+12/20/04
+. Finished work on proper shadow volumes and fixed zfighting by biasing the vertex shader.
+
+
+
+12/23/04
+. Updated documentation and did some minor fixes/spellchecking.
+
+
+
+12/24/04
+. Updated docs so that structures are actually defined.
+. Cleaned up Display::update by splitting off functionality into new functions ( Display::drawnormal and Display::drawshadow ).
+. Documented headers: display.H engine.H lighting.H
+. Undocumented headers: assess.H draw.H geometry.H surface.H stack.H algo.H cgshader.H

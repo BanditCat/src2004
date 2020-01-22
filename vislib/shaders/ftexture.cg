@@ -1,0 +1,31 @@
+void main( in float2 texCoord : TEXCOORD0,
+	   in float3 texSpaceLight : TEXCOORD1,
+           in float3 texSpaceView : TEXCOORD2,
+
+	   out float4 fragment : COLOR,
+
+	   const uniform sampler2D diffuseTex : TEXUNIT2,
+	   const uniform sampler2D bumpTex : TEXUNIT1,
+	   const uniform sampler2D specularTex : TEXUNIT3,
+	   const uniform float specExponent ){
+
+  float3 bumpvec = ( tex2D( bumpTex, texCoord ).rgb - 0.5f.xxx ) * 2f.xxx;
+  bumpvec.y = -bumpvec.y;
+  float3 light = normalize( texSpaceLight );
+
+  float3 halfangle = texSpaceView;
+  halfangle = normalize( halfangle );
+  halfangle += light;
+  halfangle = normalize( halfangle );
+  
+  float diffuse = saturate( dot( bumpvec, light ) );
+
+  float specular = pow( saturate( dot( bumpvec, halfangle ) ), specExponent );
+  specular = ( diffuse <= 0 ) ? 0 : specular;
+  specular = ( specExponent == 0 ) ? 0 : specular;	
+
+  fragment = tex2D( diffuseTex, texCoord ) * float4( diffuse.xxx, 1 );
+  fragment += tex2D( specularTex, texCoord ) * float4( specular.xxx, 1 );
+}  	
+
+	  

@@ -1,0 +1,63 @@
+<html>
+<head>
+  <title>Events</title>
+</head>
+<body>
+
+<h1>Events</h1>
+<p>These events are passed to the appropriate handler when Engine::tick is called.</p>
+
+<hr>
+
+<a name="toc"></a>
+<h2>Structures and classes</h2>
+
+<ul>
+  <li><a href="#handler">Handler</a></li>
+  <li><a href="#mouseevent">MouseEvent</a></li>
+  <li><a href="#keyevent">KeyEvent</a></li>
+</ul>
+
+<hr>
+
+<a name="handler"></a>
+<h3>Handler</h3>
+<pre>
+class Handler{
+public:
+  virtual void mousehandler( const MouseEvent& ) = 0;
+  virtual void keyhandler( const KeyEvent& ) = 0;
+  virtual void tick( fpnum tcks ) = 0;
+};
+</pre>
+<p>Handler is an abstract class that represents the functions necessary for running a program.
+It has three virtual methods: tick, mousehandler and keyhandler.  mousehandler and keyhandler get called during an Engine::tick if there is pending input. The handler tick gets called every time Engine::tick is called. Every time the handler tick gets called its parameter will be set to the approximate number of milliseconds since the last call to Engine::tick.</p>
+
+<hr>
+
+<a name="mouseevent"></a>
+<h3>MouseEvent</h3>
+<pre>
+struct MouseEvent{
+  static const byte leftbutton = 1;
+  static const byte rightbutton = 2;
+  static const byte middlebutton = 3;
+  enum Type { pressed, released, doubleclicked } type; 
+  byte button;
+};
+</pre>
+<p>A MouseEvent has two fields, type, which is an enumerant that tells whether it was a press, a release or a double click and button, which indicates the button that generated the event.  MouseEvent defines three constants: leftbutton, rightbutton and middlebutton, these are the possible values of button when a event is sent.</p>
+
+<hr>
+
+<a name="keyevent"></a>
+<h3>KeyEvent</h3>
+<pre>
+struct KeyEvent{
+  bool pressed;
+  byte symbol;
+};
+</pre>
+<p>A KeyEvent has two fields. The first, pressed, is true if the event is a key press and false if it is a key release. The second, symbol, is the symbol for the key that got pressed.  The symbol is a VK type symbol, such as VK_ESCAPE.</p>
+
+</body></html>

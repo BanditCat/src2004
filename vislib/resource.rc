@@ -1,0 +1,14 @@
+//////////////////////////////////////////////////////
+// vis v2 resource file.
+// (c) Jon DuBois 2004
+// 10/28/2004
+// This file is licensed via the GPL.
+// See license.txt for license details.
+// THIS SOFTWARE HAS NO WARRANTY.
+////////////////////////////////////////////////////// 
+#include "vis/resource.H"
+
+
+IDI_ICON       ICON    DISCARDABLE     "vislib.ico"
+
+

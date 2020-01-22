@@ -1,0 +1,231 @@
+<html>
+<head>
+  <title>Displays</title>
+</head>
+<body>
+
+<h1>Displays</h1>
+
+<p>There is only one Display, which is a member of the Engine you instantiate in WinMain.  You use this display to do all your rendering and to query information about the OpenGL and Cg subcomponents. </p>
+
+<hr>
+
+<a name="toc"></a>
+<h2>Query methods</h2>
+<ul>
+  <li><a href="#glrenderer">glrenderer</a></li>
+  <li><a href="#glvendor">glvendor</a></li>
+  <li><a href="#glversion">glversion</a></li>
+  <li><a href="#glextensions">glextensions</a></li>
+  <li><a href="#cgvtexturecompile">cgvtexturecompile</a></li>
+  <li><a href="#cgftexturecompile">cgftexturecompile</a></li>
+</ul>
+<h2>Methods</h2>
+<ul>
+  <li><a href="#draw">draw</a></li>
+  <li><a href="#texture">texture</a></li>
+  <li><a href="#bumpmap">bumpmap</a></li>
+  <li><a href="#emissionmap">emissionmap</a></li>
+  <li><a href="#specularmap">specularmap</a></li>
+  <li><a href="#view">view</a></li>
+  <li><a href="#fog">fog</a></li>
+  <li><a href="#update">update</a></li>
+  <li><a href="#clear">clear</a></li>
+  <li><a href="#anisotropic">anisotropic</a></li>
+</ul>
+<h2>Variables</h2>
+<ul>  
+  <li><a href="#light">light</a></li>
+  <li><a href="#shadowcolor">shadowcolor</a></li>
+  <li><a href="#wireframe">wireframe</a></li>
+  <li><a href="#wireframecolor">wireframecolor</a></li>
+  <li><a href="#shadowwireframecolor">shadowwireframecolor</a></li>
+</ul>
+<h2>Structures</h2>
+<ul>
+  <li><a href="#views">Views</a></li>
+  <li><a href="#colors">Colors</a></li>
+  <li><a href="#fogs">Fogs</a></li>
+</ul>
+
+<hr>
+
+<a name="glrenderer"></a>
+<h3>const char* glrenderer( void )</h3>
+<p>This returns a string identifying the OpenGL server ( a.k.a. your video card ).</p>
+
+<hr>
+
+<a name="glvendor"></a>
+<h3>const char* glvendor( void )</h3>
+<p>This returns a string identifying the OpenGL vendor.</p>
+
+<hr>
+
+<a name="glversion"></a>
+<h3>const char* glversion( void )</h3>
+<p>This returns the OpenGL version string.</p>
+
+<hr>
+
+<a name="glextensions"></a>
+<h3>const char* glextensions( void )</h3>
+<p>This returns a string containing all the supported OpenGL extensions.</p>
+
+<hr>
+
+<a name="cgvtexturecompile"></a>
+<h3>const char* cgvtexturecompile( void )</h3>
+<p>This returns the compiler output from the main vertex shader.</p>
+
+<hr>
+
+<a name="cgftexturecompile"></a>
+<h3>const char* cgftexturecompile( void )</h3>
+<p>This returns the compiler output from the main fragment shader.</p>
+
+<hr>
+
+<a name="draw"></a>
+<h3>void draw( Render& )</h3>
+<p>This registers a <a href="drawables.html#render">Render</a> so that it gets drawn when the screen is updated.  This must be done every frame; the list of Renders does not carry over from one update to the next.  Note that this means that the Render and its <a href="drawables.html#drawable">Drawable</a> must still exist when update is called.</p>
+
+<hr>
+
+<a name="texture"></a>
+<h3>void texture( const Surface& )</h3>
+<p>This sets the active texture to the given <a href="surfaces.html#surfaces">Surface</a>.</p>
+
+<hr>
+
+<a name="bumpmap"></a>
+<h3>void bumpmap( const Surface& )</h3>
+<p>This sets the active bumpmap to the given <a href="surfaces.html#surfaces">Surface</a>.</p>
+
+<hr>
+
+<a name="emissionmap"></a>
+<h3>void emissionmap( const Surface& )</h3>
+<p>This sets the active emission map to the given <a href="surfaces.html#surfaces">Surface</a>.</p>
+
+<hr>
+
+<a name="specularmap"></a>
+<h3>void specularmap( const Surface& )</h3>
+<p>This sets the active specular map to the given <a href="surfaces.html#surfaces">Surface</a>.</p>
+
+<hr>
+
+<a name="view"></a>
+<h3>void view( const View& )</h3>
+<h3>View view( void ) const</h3>
+<p>These functions set or retrieve the current <a href="#views">View</a>.</p>
+
+<hr>
+
+<a name="fog"></a>
+<h3>void fog( const Fog& )</h3>
+<h3>Fog fog( void ) const</h3>
+<p>These functions set or retrieve the current <a href="#fogs">Fog</a>.</p>
+
+<hr>
+
+<a name="update"></a>
+<h3>void update( void )</h3>
+<p>This function does the actual drawing, and also clears the registry of Renders that get drawn.</p>
+
+<hr>
+
+<a name="clear"></a>
+<h3>void clear( const Color& )</h3>
+<p>This clears the current viewport to the given <a href="#colors">Color</a>.</p>
+
+<hr>
+
+<a name="anisotropic"></a>
+<h3>bool anisotropic( void )</h3>
+<h3>void anisotropic( bool )</h3>
+<p>These control whether or not textures will be set to filter anisotropicaly when loaded.</p>
+
+<hr>
+
+<a name="light"></a>
+<h3>Vector light</h3>
+<p>This <a href="geometry.html#vectors">vector</a> detrmines where the drawables are lit from and where the shadows lie.</p>
+
+<hr>
+
+<a name="shadowcolor"></a>
+<h3>Color shadowcolor</h3>
+<p>This is the <a href="#colors">Color</a> that gets drawn in the shadows.  For transluscent shadows, just set the alpha component lower than one.</p>
+
+<hr>
+
+<a name="wireframe"></a>
+<h3>enum wireframe</h3>
+<p>This is an enumerant with four possible values: none, normal, shadow and both.  These make the display draw wireframes for nothing, drawables, shadow volumes, or both, respectivley.</p>
+
+<hr>
+
+<a name="wireframecolor"></a>
+<h3>Color wireframecolor</h3>
+<p>This <a href="#colors">Color</a> is the color that the normal wireframes are drawn in.</p>
+
+<hr>
+
+<a name="shadowwireframecolor"></a>
+<h3>Color shadowwireframecolor</h3>
+<p>This <a href="#colors">Color</a> is the color that the shadow volume wireframes are drawn in.</p>
+
+<hr>
+
+<a name="views"></a>
+<h3>Views</h3>
+<pre>
+struct View{
+  Region viewport;
+  Angle rotation;
+  Vector position;
+  fpnum fov;
+  fpnum clipnear, clipfar;
+};
+</pre>
+<p>A View defines the parameters required to get from 3d object data to the screen.  It has six variables.  The member variable viewport defines the <a href="surfaces.html#regions">Region</a> of the window that will get drawn to.  The <a href="geometry.html#angles">Angle</a> rotation defines the orientation of the viewer in world space.  The <a href="geometry.html#vectors">Vector</a> position defines the position of the viewer in object space.  The <a href="overview.html#typedefs">fpnums</a> fov, clipnear and clipfar define the field of view, near clipping plane and far clipping plane respectivley. </p>
+
+<hr>
+
+<a name="colors"></a>
+<h3>Colors</h3>
+<pre>
+struct Color{
+  Color( void ) : r( 1 ), g( 1 ), b( 1 ), a( 1 ){}
+  Color( fpnum rp, fpnum gp, fpnum bp ) : r( rp ), g( gp ), b( bp ), a( 1 ){}
+  Color( fpnum rp, fpnum gp, fpnum bp, fpnum ap ) : r( rp ), g( gp ), b( bp ), a( ap ){}
+  ~Color( void ){}
+
+  fpnum r;
+  fpnum g;
+  fpnum b;
+  fpnum a;
+};
+</pre>
+<p>A Color encapsulates an OpenGL four component color.  It has four fpnum variables, r, g, b and a.</p>
+
+<hr>
+
+<a name="fogs"></a>
+<h3>Fogs</h3>
+<pre>
+struct Fog{
+  enum Type { none, linear, exp, exp2 } type;					     
+  Color color;
+  fpnum start, end, density;
+
+  Fog( Type t, const Color& c, fpnum s, fpnum e, fpnum d ) : type( t ), color( c ),
+							     start( s ), end( e ), density( d ){}
+  Fog( void ) : type( none ), color( Color( 1, 1, 1, 1 ) ), start( 0 ), end( 1 ), density( 1 ){}
+};
+</pre>
+<p>A Fog is a variable that is used to describe a fog setting, it has five variables.  type is an enumerant that determines the type of function that the fog obeys; type is one of none, linear, exp or exp2.  The variable color is the <a href="#colors">Color</a> of the Fog.  The variables start, end and density control the parameters of the fog.  For a detailed description of the fog equations, refer to the OpenGL specification.</p>
+
+</body></html>

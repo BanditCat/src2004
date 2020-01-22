@@ -1,0 +1,46 @@
+// This shader transforms object space light and view vectors into texture
+// space given the s, t, and r components of texture space in object space.
+void main( in float2 inTexCoord : TEXCOORD0,
+	   in float3 inPosition : POSITION,
+           // This is texture space.
+	   in float3 texSpaceS : TEXCOORD1,
+	   in float3 texSpaceT : TEXCOORD2,
+
+	   out float2 outTexCoord : TEXCOORD0,
+	   out float4 outPosition : POSITION,
+	   out float3 texSpaceLight : TEXCOORD1,
+	   out float3 texSpaceView : TEXCOORD2,
+
+	   const uniform float4x4 modelViewProj,
+	   // This is the object space light vector.
+           const uniform float3 light,
+	   // This is the object space view vector.
+	   const uniform float3 view,
+	   // This gets around the compiler bug by a call to
+	   // cgGLSetParameter1f( one, 1 ) in the program.
+	   const uniform float one ){
+
+  // if this were mul( modelViewProj, float4( inPosition, 1 ) )
+  // the bug would manifest.
+  float3 texSpaceR = cross( texSpaceS, texSpaceT );
+  outPosition = mul( modelViewProj, float4( inPosition, one ) );
+  // stop zfighting.
+  outPosition.z -= 0.0001;
+
+  outTexCoord = inTexCoord;
+
+  texSpaceLight = light;
+  texSpaceLight -= inPosition;
+  texSpaceLight = float3( dot( texSpaceS, texSpaceLight ), 
+			  dot( texSpaceT, texSpaceLight ), 
+			  dot( texSpaceR, texSpaceLight ) );
+
+  texSpaceView = view;
+  texSpaceView -= inPosition;
+  texSpaceView = float3( dot( texSpaceS, texSpaceView ),
+			 dot( texSpaceT, texSpaceView ),
+			 dot( texSpaceR, texSpaceView ) );
+}
+    
+  
+  

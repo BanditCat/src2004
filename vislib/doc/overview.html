@@ -1,0 +1,94 @@
+<html>
+<head>
+  <title>Vislib overview</title>
+</head>
+<body>
+
+<h1>Vislib overview</h1>
+<p>This document contains an overview of the common usage of Vislib, along with some other useful information.</p>
+
+<hr>
+
+<a name="typedefs"></a>
+<h2>Typedefs</h2>
+<p>Vislib defines the following typedefs:</p>
+<dl>
+  <dt>byte</dt>
+  <dd>unsigned 8-bit integer</dd>
+  <dt>sbyte</dt>
+  <dd>signed 8-bit integer</dd>
+  <dt>word</dt>
+  <dd>unsigned 16-bit integer</dd>
+  <dt>sword</dt>
+  <dd>signed 16-bit integer</dd>
+  <dt>dword</dt>
+  <dd>unsigned 32-bit integer</dd>
+  <dt>sdword</dt>
+  <dd>signed 32-bit integer</dd>
+  <dt>fpnum</dt>
+  <dd>32-bit IEEE floating point variable</dd>
+  <dt>dfpnum</dt>
+  <dd>64-bit IEEE floating point variable</dd>
+</dl>
+
+<hr>
+
+<a name="usage"></a>
+<h2>Usage</h2>
+<p>Vislib is based on the concept of a handler.  You define a handler class with Handler as a base class, 
+instantiate it, then register it with the Engine via Engine::sethandler.
+Your handler gets its functions called as the engine ticks.  The main function is Engine::tick, which
+handles all mouse and keyboard input and also calls back your handlers tick function.  Your handlers tick
+function will get called with the approximate number of elapsed milliseconds as its argument.  Engine::tick
+will package up all keyboard and mouse input as events and send them as arguments to your handlers event handling
+functions.</p>
+<p>Typical usage would go as follows: first, declare a class that is derived from Handler with 
+your own custom mousehandler, keyhandler and tick functions, and an initialiser that takes a Display
+ reference as a parameter ( more on this later ).  Your handler class would have some Drawables and 
+some Renders.  Somewhere in your tick or constructor function you would set all the Render members
+ to their appropriate values.  After that you would typically do something like this inside your 
+tick function:</p>
+<pre>
+somerendervariable.transform.identity();
+somerendervariable.transform.rotate( someangle );
+somerendervariable.transform.translate( somevector );
+somecreen.draw( somerendervariable );
+...
+somescreen.update();
+</pre>
+
+<p>Declaring your handler class can be difficult because you can't have a global Engine, but you must access the Engine within your handler class.  There is a way around this: put a Display& in your handler and have it set in the constructor, like this:</p>
+<pre>
+class handler : public Handler{
+public:
+  handler( Display& d ) : screen( d ){}
+
+  void tick( fpnum ticks ){
+    &lt;do something with screen and set done if appropriate&gt;
+    ...
+  }
+  ...
+private:
+  Display& screen;
+  bool done;
+}
+</pre>
+<p>WinMain might look like this</p>
+<pre>
+int WINAPI WinMain( ... ){
+  Engine theengine( IDI_ICON );
+  handler thehandler( theengine.screen );
+  theengine.sethandler( thehandler );
+  ...
+  while( !thehandler.done && theengine.tick() )
+    ;
+  return 0;
+}
+</pre>
+
+<hr>
+
+<a name="caveats"></a>
+<h2>Caveats</h2>
+<p>Vislib operation is somewhat complex, and some non-intuitive aspects may lead to unexpected program failure.  Specifically, it is important to keep in mind that calling Display::draw doesn't actually draw anything, it just registers it's argument to get drawn at the next update, so if you draw an object and it gets destroyed before the call to Display::update, you could end up segfaulting.  Also remember that your Engine must not be global or else it could be initialised before its dependent objects are, leading to program failure.</p>
+</body></html>

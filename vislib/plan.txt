@@ -1,0 +1,50 @@
+NOW
+
+. render to texture then from texture to screen.(hard)
+. depth of field.
+
+
+
+
+
+THE PLAN
+. Fix fogging.
+. make it render in passed, first pass is depth, then shadow volumes ( one per rgba channel ), then textures.
+. make it so shader discards unlit triangles
+. fresnell and cube maps.
+. make specular map a exponent/intensity/reflectivity map instead.
+. fix lighting 
+. textured lighting.
+. Bitmaps for see-throughness.
+. Make gears.(hard)
+. Write demo.
+. texture compression.
+
+
+MAYBE
+. Texture compression.
+. Optimize to one pass.
+. Make it so you can write in text( do as a pass for the scene ).
+. DOCUMENTATION.
+
+
+DONE
+. make it render in passes, with the first pass being reflectivity and depth and then one pass per light. ( bad method )
+. Fix surfaces to get rid of client memory and also to check for residency and to make it only one format and to make it so you can load after you create the texture( client memory ok, residency pointless, one format, and post-loadable ).
+. Make it so shadows work while viewing from inside the shadow volume( zfail with shadow volume caps ).
+. make vertex shader for doing shadow volume caps. ( nope ).
+. Make wireframe for shadows and models
+. objectify shaders for better management.
+. Change license.
+. Separate textures and surfaces ( made  rgb rgbsurfs and unitextures )
+. check filtering for chicken/egg problems ( anisotropic works both enabled or disabled ).
+. Solve texture compression ( compare dxt5 alpha-red swizzle to palletised
+textures (both cut mem in half) ) (no compression yet)
+. make it so shadowing tests each edge only once.( obsolete, hard, and next to no performance gain)
+. make shadow algorithm two-sided( obsolete, pointless and costly ).
+. make drawables compilable so that you can do vertex/etc streams and VBOs( works well, speed x 5 ).
+. Make parametric surfaces( not going to happen )
+. use shaders.
+. see if double sided stencil is supported.(nope)
+. Make per-vertex computations to be per-drawable instead
+(optionally).(obsolete)

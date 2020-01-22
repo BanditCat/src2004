@@ -1,0 +1,130 @@
+<html>
+<head>
+  <title>Engines</title>
+</head>
+<body>
+
+<h1>Engines</h1>
+<p>Engines encapsulate most of the OS dependent code, and because of this they must not be declared globally and there must be only one engine.</p>
+
+<hr>
+
+<a name="toc"></a>
+<h2>Methods</h2>
+
+<ul>
+  <li><a href="#init">init</a></li>
+  <li><a href="#tick">tick</a></li>
+  <li><a href="#sethandler">sethandler</a></li>
+  <li><a href="#button">button</a></li>
+  <li><a href="#key">key</a></li>
+  <li><a href="#mousedx">mousedx</a></li>
+  <li><a href="#mousedy">mousedy</a></li>
+  <li><a href="#fps">fps</a></li>
+  <li><a href="#fpsframes">fpsframes</a></li>
+  <li><a href="#focused">focused</a></li>
+  <li><a href="#aspect">aspect</a></li>
+  <li><a href="#width">width</a></li>
+  <li><a href="#height">height</a></li>
+</ul>
+<h2>Variables</h2>
+
+<ul>
+  <li><a href="#screen">screen</a></li>
+</ul>
+
+<hr>
+
+<a name="init"></a>
+<h3>bool Engine::init( word width, word height, byte bits, byte samples, bool anisotropic, const char* name, bool fullscreen )</h3>
+<p>This function is responsible for actually creating the window.  Width and height 
+are the dimensions of the window, bits is the desired bitdepth of the window, samples is the number of samples to 
+use for full-screen anti-aliasing ( or 1 for no FSAA ),  anisotropic controls whether or not anisotropic filtering is enabled, name is the title of the window and fullscreen indicates whether or 
+not it is fullscreen.  This must return true before the engine can be used.  This function can be called more than once if and only if it returns false, once it returns true, it must not be called again.</p>
+
+<hr>
+
+<a name="tick"></a>
+<h3>bool Engine::tick( void )</h3>
+<p>Tick is the primary purpose of having an Engine.  Calling tick checks for pending keystrokes and mouse clicks, and also calls the Engines registered handler tick function with an appropriate value.  Both <a href="#init">init</a> and <a href="#sethandler">sethandler</a> must be called before tick may be used.</p>
+
+<hr>
+
+<a name="sethandler"></a>
+<h3>void Engine::sethandler( Handler& )</h3>
+<p>This functions registers a Handler to be called back for events and <a href="#tick">ticks</a>.</p>
+
+<hr>
+
+<a name="button"></a>
+<h3>bool Engine::button( byte index )</h3>
+<p>This function returns true if the mouse button indicated by index is depressed, and false otherwise.
+The constants that are used for index are defined in <a href="events.html#mouseevent">MouseEvent</a></p>
+
+<hr>
+
+<a name="key"></a>
+<h3>bool Engine::key( byte index )</h3>
+<p>This function returns true if the key indicated by index is depressed, and false otherwise.
+The constants that are used for index are the windows VK constants such as VK_ESCAPE.</p>
+
+<hr>
+
+<a name="mousedx"></a>
+<h3>fpnum Engine::mousedx( void )</h3>
+<p>This function returns the relative horizontal mouse movement since the last call to tick.</p>
+
+<hr>
+
+<a name="mousedy"></a>
+<h3>fpnum Engine::mousedy( void )</h3>
+<p>This function returns the relative vertical mouse movement since the last call to tick.</p>
+
+<hr>
+
+<a name="fps"></a>
+<h3>fpnum Engine::fps( void )</h3>
+<p>This function returns the average frames per second over the last n frames, 
+where n is set or retrieved with fpsframes.</p>
+
+<hr>
+
+<a name="fpsframes"></a>
+<h3>dword Engine::fpsframes( void )</h3>
+<h3>void Engine::fpsframes( dword frames )</h3>
+<p>These functions either retrieve or set the number of frames that
+time is averaged across.  This will affect both <a
+href="#tick">tick</a> and 
+<a href="#fps">fps</a>.</p>
+
+<hr>
+
+<a name="focused"></a>
+<h3>bool Engine::focused( void )</h3>
+<p>This function returns true if the window has focus ( i.e. is visible ) from the OS and false otherwise.</p>
+
+<hr>
+
+<a name="aspect"></a>
+<h3>fpnum Engine::aspect( void )</h3>
+<p>This returns the aspect ratio of the window, that is, its width divided by its height.</p> 
+
+<hr>
+
+<a name="width"></a>
+<h3>dword Engine::width( void )</h3>
+<p>This returns the width of the window.</p>
+
+<hr>
+
+<a name="height"></a>
+<h3>dword Engine::height( void )</h3>
+<p>This returns the height of the window.</p>
+
+<hr>
+
+<a name="screen"></a>
+<h3>Display screen</h3>
+<p>This is the only <a href="displays.html">Display</a> that ever actually gets instantiated ( it is an error to have more than one Engine or Display ).  You use this for rendering.</p>
+
+</body></html>

@@ -1,0 +1,13 @@
+This software was created by Jon DuBois.  It is written in the hopes that someone will find it interesting or helpful.  There is absolutely no warranty whatsoever for this software.
+
+This licence applies only to software in this distribution written by me, Jon DuBois.  Other files distributed with this software are distributed under their own licenses, described below.
+
+Use of this software, in either source code form or in object form constitutes an agreement to abide by this license.  
+
+You are explicitly allowed to make use of this software as you see fit, including derivative works, so long as it does not contradict this license.  You are explicitly forbidden to change the licence on any derivative works, other than adding a notice of authorship, to the extent provided for under law.
+
+You may redistribute this software, in either source code or in object form, in whole or in part, so long as it is accompanied by this licence.  You may only use the software for academic, non-profit purposes, unless provided for in a separate written agreement.  This license, and your right to use the software, will terminate if any of these conditions are violated.
+
+If the files wglext.h and glext.h are distributed with this document, they are governed by their own licence, see the files for details.
+
+(c) 2004 Jon DuBois
